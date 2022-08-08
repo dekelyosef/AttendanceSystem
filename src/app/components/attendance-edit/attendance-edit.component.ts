@@ -5,6 +5,7 @@ import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {Day} from "../../models/day";
 import {TranslateService} from "@ngx-translate/core";
 import {AttendanceService} from "../../services/attendance.service";
+import {DaysService} from "../../services/days.service";
 
 
 @Component({
@@ -37,7 +38,9 @@ export class AttendanceEditComponent implements OnInit {
   public tempAttendance: Attendance = {id: -1, name: '', day: ''};
   public title = "Attendance details";
 
-  constructor(private attendanceService: AttendanceService, private translate: TranslateService) {
+  constructor(private attendanceService: AttendanceService,
+              private daysService: DaysService,
+              private translate: TranslateService) {
     this.nameForm = new FormGroup({
       fullName: new FormControl('', [
         Validators.required,
@@ -52,7 +55,7 @@ export class AttendanceEditComponent implements OnInit {
   }
 
   getDayNames() {
-    this.attendanceService.getDays().forEach(day => this.translate.get(day.name).subscribe((res: string) => {
+    this.daysService.getDays().forEach(day => this.translate.get(day.name).subscribe((res: string) => {
       this.days.push({id:day.id , name:res});
     }))
   }
@@ -122,7 +125,7 @@ export class AttendanceEditComponent implements OnInit {
   openUpdateDialog(attendance: Attendance) {
     this.tempAttendance = attendance;
     this.fullName?.setValue(attendance.name);
-    this.selectedDay = this.attendanceService.getDay(attendance.day);
+    this.selectedDay = this.daysService.getDay(attendance.day);
     this.id = attendance.id;
     this.productDialog = true;
   }

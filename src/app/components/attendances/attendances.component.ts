@@ -6,6 +6,7 @@ import {MessagesComponent} from "../messages/messages.component";
 import * as XLSX from "xlsx";
 import {TranslateService} from "@ngx-translate/core";
 import {AttendanceEditComponent} from "../attendance-edit/attendance-edit.component";
+import {DaysService} from "../../services/days.service";
 
 @Component({
   selector: 'app-attendances',
@@ -23,10 +24,12 @@ export class AttendancesComponent implements OnInit {
   @ViewChild(MessagesComponent) message!: MessagesComponent ;
   @ViewChild(AttendanceEditComponent) edit!: AttendanceEditComponent;
 
-  constructor(private attendanceService: AttendanceService, private translate: TranslateService) { }
+  constructor(private attendanceService: AttendanceService,
+              private daysService: DaysService,
+              private translate: TranslateService) { }
 
   ngOnInit() {
-    this.days = this.attendanceService.getDays();
+    this.days = this.daysService.getDays();
     this.getAttendances();
   }
 

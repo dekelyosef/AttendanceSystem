@@ -11,26 +11,8 @@ import { environment } from 'src/environments/environment';
 export class AttendanceService {
 
   private apiUrl = environment.apiUrl;
-  public days: Day[] = [];
 
-  constructor(private http: HttpClient) {
-    this.days = [
-      {id: 1, name: 'sunday'},
-      {id: 2, name: 'monday'},
-      {id: 3, name: 'tuesday'},
-      {id: 4, name: 'wednesday'},
-      {id: 5, name: 'thursday'},
-      {id: 6, name: 'friday'}
-    ];
-  }
-
-  getDays(): Day[] {
-    return this.days;
-  }
-
-  getDay(day: string): Day | undefined {
-    return this.days.find(d => d.name === day);
-  }
+  constructor(private http: HttpClient) { }
 
   getAttendances(): Observable<Attendance[]> {
     return this.http.get<Attendance[]>(this.apiUrl + '/attendances');
