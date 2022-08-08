@@ -1,0 +1,37 @@
+<p-table [value]="records" dataKey="id" styleClass="p-datatable-gridlines">
+  <ng-template pTemplate="header" >
+    <tr>
+      <th translate style="text-align: -webkit-right">{{day}}</th>
+    </tr>
+  </ng-template>
+  <ng-template
+    pTemplate="body"
+    let-record>
+    <tr [pEditableRow]="record">
+      <div class="record">
+        <td>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <input pInputText type="text" [(ngModel)]="record.name" />
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ record.name }}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <div class="record">
+          <td>
+            <button pButton pRipple icon="pi pi-pencil" class="size p-button p-button-success p-mr-2"
+                    (click)="editAttendance(record)"></button>
+          </td>
+          <td>
+            <button pButton pRipple icon="pi pi-trash" class="size p-button p-button-warning"
+                    (click)="deleteAttendance(record.id)"></button>
+          </td>
+        </div>
+      </div>
+    </tr>
+  </ng-template>
+</p-table>
+
+

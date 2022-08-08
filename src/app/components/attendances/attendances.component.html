@@ -1,0 +1,23 @@
+<app-messages></app-messages>
+<div class="buttons-body">
+  <p-toolbar styleClass="p-mb-4">
+    <ng-template pTemplate="left">
+      <button pButton pRipple icon="pi pi-plus" class="p-button-success button-size p-mr-2"
+              (click)="editNewAttendance()" translate>{{'add'}}</button>
+    </ng-template>
+    <ng-template pTemplate="right">
+      <button pButton icon="pi pi-upload" class="p-button-help button-size p-mr-2"
+              (click)="exportDB()" translate>{{'export'}}</button>
+      <button pButton icon="pi pi-upload" class="p-button-help button-size p-mr-2"
+              (click)="report()" translate>{{'report'}}</button>
+    </ng-template>
+  </p-toolbar>
+</div>
+<div class="table">
+  <div *ngFor="let day of days" style="width: 100%">
+    <app-day day={{day.name}} [records]="getDayRecords(day.name)" (edit)="editAttendance($event)"
+             (delete)="deleteAttendance($event)"></app-day>
+  </div>
+</div>
+<app-attendance-edit [allRecords]="getRecords()" (add)="addAttendance($event)" (update)="updateAttendance($event)"
+                     (error)="addError($event)"></app-attendance-edit>

@@ -1,0 +1,29 @@
+.record {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row-reverse;
+  margin: 0.1rem;
+}
+
+.size {
+  margin-left: 2px;
+  width: 2rem;
+  height: 2rem;
+}
+
+.day-header {
+  text-align: -webkit-right;
+}
+
+.p-button-success {
+  color: #22c45e;
+  background: #f8f9fa;
+  border: 1px solid #22c45e;
+}
+
+.p-button-warning {
+  color: #f49d0b;
+  background: #f8f9fa;
+  border: 1px solid #f49d0b;
+}
