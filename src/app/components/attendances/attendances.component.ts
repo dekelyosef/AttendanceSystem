@@ -7,6 +7,8 @@ import * as XLSX from "xlsx";
 import {TranslateService} from "@ngx-translate/core";
 import {AttendanceEditComponent} from "../attendance-edit/attendance-edit.component";
 import {DaysService} from "../../services/days.service";
+import {Observable} from "rxjs";
+import {State} from "../../models/state";
 
 @Component({
   selector: 'app-attendances',
@@ -14,6 +16,8 @@ import {DaysService} from "../../services/days.service";
   styleUrls: ['./attendances.component.css']
 })
 export class AttendancesComponent implements OnInit {
+
+  allRecords$!: Observable<Attendance[]>;
 
   public records = new Array<Attendance>();
   public dayRecords = new Array<Attendance>();
@@ -26,60 +30,50 @@ export class AttendancesComponent implements OnInit {
 
   constructor(private attendanceService: AttendanceService,
               private daysService: DaysService,
-              private translate: TranslateService) { }
-
-  ngOnInit() {
+              private translate: TranslateService) {
     this.days = this.daysService.getDays();
-    this.getAttendances();
+    this.allRecords$ = this.attendanceService.getAttendances();
   }
 
-  getAttendances(): void {
-    this.attendanceService.getAttendances().subscribe({
-      next: (res: Attendance[]) => this.records = res,
-      error:(err: any) => this.message.addMessage("error", err.error.error),
-    });
-  }
+  ngOnInit() { }
 
-  getRecords() {
-    return this.records;
-  }
+  // getAttendances(): void {
+  //   this.attendanceService.getAttendances().subscribe({
+  //     next: (res: Attendance[]) => this.records = res,
+  //     error:(err: any) => this.message.addMessage("error", err.error.error),
+  //   });
+  // }
+  //
+  // getRecords() {
+  //   return this.records;
+  // }
+  //
 
-  getDayRecords(day: string) {
-    this.translate.get(day).subscribe((res: string) => {
-      this.tempDay = res;
-    });
-    this.dayRecords = [];
-    this.records.forEach(record => {
-      if (this.tempDay === record.day) {
-        this.dayRecords.push(record)
-      }
-    });
-    return this.dayRecords;
-  }
 
-  addAttendance(attendance: Attendance) {
-    if (attendance.id >= 100 || attendance.id < 0) {
-      return;
-    }
-    this.attendanceService.addAttendance(attendance).subscribe({
-      next: () => this.getAttendances(),
-      error:(err: any) => this.message.addMessage("error", err.error.error),
-    });
-  }
-
-  updateAttendance(attendance: Attendance) {
-    this.attendanceService.updateAttendance(attendance).subscribe({
-      next: () => this.getAttendances(),
-      error:(err: any) => this.message.addMessage("error", err.error.error),
-    });
-  }
-
-  deleteAttendance(id: number) {
-    this.attendanceService.deleteAttendanceById(id).subscribe({
-      next: () => this.getAttendances(),
-      error: (err: any) => this.message.addMessage("error", err.error.error),
-    });
-  }
+  //
+  // addAttendance(attendance: Attendance) {
+  //   if (attendance.id >= 100 || attendance.id < 0) {
+  //     return;
+  //   }
+  //   this.attendanceService.addAttendance(attendance).subscribe({
+  //     next: () => this.getAttendances(),
+  //     error:(err: any) => this.message.addMessage("error", err.error.error),
+  //   });
+  // }
+  //
+  // updateAttendance(attendance: Attendance) {
+  //   this.attendanceService.updateAttendance(attendance).subscribe({
+  //     next: () => this.getAttendances(),
+  //     error:(err: any) => this.message.addMessage("error", err.error.error),
+  //   });
+  // }
+  //
+  // deleteAttendance(id: number) {
+  //   this.attendanceService.deleteAttendanceById(id).subscribe({
+  //     next: () => this.getAttendances(),
+  //     error: (err: any) => this.message.addMessage("error", err.error.error),
+  //   });
+  // }
 
   addError(err: string) {
     this.message.addMessage("error", err);
@@ -106,6 +100,10 @@ export class AttendancesComponent implements OnInit {
       next: (res) => this.message.addMessage("success", res),
       error: (err) => this.message.addMessage("error", err.error.error),
     });
+  }
+
+  async deleteAttendance($event: number) {
+    await this.attendanceService.deleteAttendanceById($event);
   }
 
 }

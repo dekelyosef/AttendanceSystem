@@ -15,9 +15,9 @@
 </div>
 <div class="table">
   <div *ngFor="let day of days" style="width: 100%">
-    <app-day day={{day.name}} [records]="getDayRecords(day.name)" (edit)="editAttendance($event)"
+    <app-day [day]=day.name (edit)="editAttendance($event)"
              (delete)="deleteAttendance($event)"></app-day>
   </div>
 </div>
-<app-attendance-edit [allRecords]="getRecords()" (add)="addAttendance($event)" (update)="updateAttendance($event)"
-                     (error)="addError($event)"></app-attendance-edit>
+<app-attendance-edit (error)="addError($event)"></app-attendance-edit>
+

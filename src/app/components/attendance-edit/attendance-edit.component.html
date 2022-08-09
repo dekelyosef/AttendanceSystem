@@ -1,39 +1,32 @@
 <p-dialog [(visible)]="productDialog" header="{{ 'Attendance details' | translate }}" [modal]="true">
   <app-messages></app-messages>
   <ng-template pTemplate="content">
-    <form [formGroup]="nameForm">
-      <label for="fullName" class="position" translate>{{"Full name"}}</label>
-      <span class="p-float-label body">
-      <input type="text" id="fullName" class="form-control" formControlName="fullName" pInputText
-             name="fullName" maxlength="30">
-    </span>
-      <div *ngIf="fullName?.invalid && (fullName?.dirty || fullName?.touched)" class="alert alert-danger">
-        <div *ngIf="fullName?.errors?.['required']" class="alert alert-danger position">
-          <small id="fullName-required" class="p-error" >Full name is required</small>
-        </div>
-        <div *ngIf="fullName?.errors?.['pattern']" class="alert alert-danger position">
-          <small id="fullName-pattern" class="p-error" >Invalid name</small>
-        </div>
-        <div *ngIf="fullName?.errors?.['maxlength']" class="alert alert-danger position">
-          <small id="fullName-max" class="p-error" >Full name can be max 30 characters long</small>
-        </div>
+    <form [formGroup]="form">
+      <div class="form-field" *ngIf="control('fullName') as field">
+        <label class="position" translate>Full name</label>
+        <span class="p-float-label body">
+          <input type="text" id="fullName" class="form-control" formControlName="fullName" pInputText
+                name="fullName" maxlength="30">
+        </span>
+        <app-errors-presenter [errors]="field.errors"></app-errors-presenter>
+      </div>
+      <div class="header-body" *ngIf="control('day') as field">
+        <label class="position" translate>Day</label>
+        <select class="drop-down-position" name="colors" id="colors"
+                [formControl]="field">
+          <option *ngFor="let day of days"
+                  [value]="day.name">
+            {{day.name}}
+          </option>
+        </select>
+        <app-errors-presenter [errors]="field.errors"></app-errors-presenter>
       </div>
     </form>
-    <div class="position">
-      <label class="header-body" translate>{{"Day"}}</label>
-      <div class="drop-down-position">
-        <p-dropdown class="drop-down-body" [options]="days" [(ngModel)]="selectedDay"
-                    placeholder="{{ 'select day' | translate }}" optionLabel="name"></p-dropdown>
-      </div>
-    </div>
   </ng-template>
   <ng-template pTemplate="footer">
-    <div class="position">
-      <small id="day" class="p-error" >{{showDayError()}}</small>
-    </div>
     <button pButton pRipple icon="pi pi-times" class="p-button-text button-size"
             (click)="hideDialog()" translate>{{"Cancel"}}</button>
-    <button [disabled]="isDisabled()" pButton pRipple icon="pi pi-check" class="p-button-text button-size"
+    <button [disabled]="form.invalid" pButton pRipple icon="pi pi-check" class="p-button-text button-size"
             (click)="saveAttendance()" translate>{{"Save"}}</button>
   </ng-template>
 </p-dialog>

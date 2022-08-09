@@ -1,4 +1,4 @@
-<p-table [value]="records" dataKey="id" styleClass="p-datatable-gridlines">
+<p-table [value]="(allRecords$ | async)!" dataKey="id" styleClass="p-datatable-gridlines">
   <ng-template pTemplate="header" >
     <tr>
       <th translate style="text-align: -webkit-right">{{day}}</th>

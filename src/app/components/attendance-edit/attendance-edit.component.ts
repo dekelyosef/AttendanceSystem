@@ -6,6 +6,8 @@ import {Day} from "../../models/day";
 import {TranslateService} from "@ngx-translate/core";
 import {AttendanceService} from "../../services/attendance.service";
 import {DaysService} from "../../services/days.service";
+import {map, Observable} from "rxjs";
+import {State} from "../../models/state";
 
 
 @Component({
@@ -14,8 +16,8 @@ import {DaysService} from "../../services/days.service";
   styleUrls: ['./attendance-edit.component.css']
 })
 export class AttendanceEditComponent implements OnInit {
-  @Input()
-  allRecords = new Array<Attendance>();
+
+  allRecords$!: Observable<Attendance[]>;
 
   @Output()
   add = new EventEmitter<Attendance>();
@@ -28,104 +30,104 @@ export class AttendanceEditComponent implements OnInit {
 
   @ViewChild(MessagesComponent) errorMessage!: MessagesComponent ;
 
-  public nameForm: FormGroup;
-  public days: Day[] = [];
-  public selectedDay: Day | undefined;
+  public days!: Day[];
   public dayError = "";
   public productDialog: boolean = false;
-  public id: number | undefined;
+  public id = -1;
   public flag = true;
-  public tempAttendance: Attendance = {id: -1, name: '', day: ''};
+  // public tempAttendance: Attendance = {id: -1, name: '', day: ''};
   public title = "Attendance details";
+
+  public form = new FormGroup({
+    fullName: new FormControl('', [
+      Validators.required,
+      Validators.pattern("^[a-zA-Z\u0590-\u05FF]{2,}(?: [a-zA-Z\u0590-\u05FF]+){1,4}$"),
+      Validators.maxLength(30)
+    ]),
+    day: new FormControl('', Validators.required)
+  });
 
   constructor(private attendanceService: AttendanceService,
               private daysService: DaysService,
               private translate: TranslateService) {
-    this.nameForm = new FormGroup({
-      fullName: new FormControl('', [
-        Validators.required,
-        Validators.pattern("^[a-zA-Z\u0590-\u05FF]{2,}(?: [a-zA-Z\u0590-\u05FF]+){1,4}$"),
-        Validators.maxLength(30)
-      ]),
-    });
-  }
-
-  ngOnInit(): void {
+    this.allRecords$ = this.attendanceService.getAttendances();
     this.getDayNames();
   }
 
+  ngOnInit(): void { }
+
+  control(name: string): FormControl<any> {
+    return this.form.get(name)! as FormControl<any>;
+  }
+
   getDayNames() {
+    this.days = [];
     this.daysService.getDays().forEach(day => this.translate.get(day.name).subscribe((res: string) => {
       this.days.push({id:day.id , name:res});
     }))
   }
 
-  get fullName() { return this.nameForm.get('fullName'); }
-
   clearDetails() {
-    this.fullName?.reset();
-    this.selectedDay = undefined;
-    this.id = undefined;
-    this.tempAttendance = {id: -1, name: '', day: ''};
+    this.form.reset();
+    // this.selectedDay = undefined;
+    this.id = -1;
+    // this.tempAttendance = {id: -1, name: '', day: ''};
   }
 
-  saveAttendance() {
-    if (this.selectedDay !== undefined && this.canRegistered()) {
-      if (this.id === undefined) {
-        let attendance =
-          {id: this.getId(), name: this.fullName?.value, day: this.selectedDay.name};
-        this.add.emit(attendance);
-      } else {
-        let attendance =
-          {id: this.id, name: this.fullName?.value, day: this.selectedDay.name};
-        this.update.emit(attendance);
-      }
-      this.productDialog = false;
+  async saveAttendance(): Promise<void> {
+    if (this.id === -1) {
+      await this.attendanceService.addAttendance(
+        this.control("fullName").value, this.control("day").value);
+    } else {
+      const attendance = {
+        id: this.id,
+        name: this.control("fullName").value,
+        day: this.control("day").value
+      };
+      // this.update.emit(attendance);
+      await this.attendanceService.updateAttendance(attendance);
     }
+    this.productDialog = false;
   }
 
   canRegistered(): boolean {
     let flag = true;
     let sum = 0;
-    this.allRecords.forEach(async (record) => {
-      if (record.name === this.fullName?.value) {
-        sum += 1;
-        if (record.day === this.selectedDay?.name) {
-          this.errorMessage.addMessage("error","It isn't possible to register more than once on the same day");
-          flag = false;
-        }
-      }
-    });
-    let max = 3;
-    if (this.fullName?.value === this.tempAttendance.name) {
-      max = 4;
-    }
-    if (sum >= max) {
-      this.errorMessage.addMessage("error","It isn't possible to work from home more than three days a week");
-      flag = false;
-    }
+    // let userRecords = this.allRecords$.pipe(
+    //   map(attendance => attendance.attendances.filter(
+    //     record => record.name === this.control("fullName").value
+    //   ))
+    // );
+    //
+    // userRecords.pipe(
+    //   map(record =>
+    //   record))
+
+
+    // this.allRecords.forEach(async (record) => {
+    //   if (record.name === this.fullName?.value) {
+    //     sum += 1;
+    //     if (record.day === this.selectedDay?.name) {
+    //       this.errorMessage.addMessage("error","It isn't possible to register more than once on the same day");
+    //       flag = false;
+    //     }
+    //   }
+    // });
+    // let max = 3;
+    // if (this.fullName?.value === this.tempAttendance.name) {
+    //   max = 4;
+    // }
+    // if (sum >= max) {
+    //   this.errorMessage.addMessage("error","It isn't possible to work from home more than three days a week");
+    //   flag = false;
+    // }
     return flag;
   }
 
-  isDisabled(): boolean {
-    if (this.showDayError() || this.fullName?.invalid || this.selectedDay === undefined) {
-      return true;
-    }
-    return false;
-  }
-
-  getId(): number {
-    let id = Math.floor(Math.random() * 100);
-    if (this.allRecords.find(attendance => attendance.id === id)) {
-      return this.getId();
-    }
-    return id;
-  }
-
   openUpdateDialog(attendance: Attendance) {
-    this.tempAttendance = attendance;
-    this.fullName?.setValue(attendance.name);
-    this.selectedDay = this.daysService.getDay(attendance.day);
+    // this.tempAttendance = attendance;
+    this.control("fullName").setValue(attendance.name);
+    this.control("day").setValue(attendance.day);
     this.id = attendance.id;
     this.productDialog = true;
   }
@@ -140,7 +142,7 @@ export class AttendanceEditComponent implements OnInit {
   }
 
   showDayError() {
-    if (this.selectedDay === null) {
+    if (this.control("day").invalid) {
       this.dayError = "Select day is required";
     } else {
       this.dayError = '';

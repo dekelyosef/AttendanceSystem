@@ -1,0 +1,5 @@
+<div class="errors" *ngIf="errors">
+  <div *ngIf="errors['required'] as err">required</div>
+  <div *ngIf="errors['maxlength'] as err">should contains maximum {{err.requiredLength}} characters</div>
+  <div *ngIf="errors['pattern'] as err">Invalid name</div>
+</div>

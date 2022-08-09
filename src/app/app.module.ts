@@ -22,6 +22,7 @@ import {DropdownModule} from "primeng/dropdown";
 import {DialogModule} from "primeng/dialog";
 import { HttpClientModule } from "@angular/common/http";
 import {RippleModule} from "primeng/ripple";
+import { ErrorsPresenterComponent } from './components/errors-presenter/errors-presenter.component';
 
 
 @NgModule({
@@ -31,6 +32,7 @@ import {RippleModule} from "primeng/ripple";
     DayComponent,
     AttendanceEditComponent,
     MessagesComponent,
+    ErrorsPresenterComponent,
   ],
   imports: [
     BrowserModule,
