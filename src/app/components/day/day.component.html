@@ -1,4 +1,4 @@
-<p-table [value]="(allRecords$ | async)!" dataKey="id" styleClass="p-datatable-gridlines">
+<p-table [value]="(dayRecords$ | async)!" dataKey="id" styleClass="p-datatable-gridlines">
   <ng-template pTemplate="header" >
     <tr>
       <th translate style="text-align: -webkit-right">{{day}}</th>
@@ -22,11 +22,13 @@
         <div class="record">
           <td>
             <button pButton pRipple icon="pi pi-pencil" class="size p-button p-button-success p-mr-2"
-                    (click)="editAttendance(record)"></button>
+                    (click)="editAttendance(record)">
+            </button>
           </td>
           <td>
             <button pButton pRipple icon="pi pi-trash" class="size p-button p-button-warning"
-                    (click)="deleteAttendance(record.id)"></button>
+                    (click)="deleteAttendance(record.id)">
+            </button>
           </td>
         </div>
       </div>

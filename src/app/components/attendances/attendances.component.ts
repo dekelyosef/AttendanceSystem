@@ -37,44 +37,6 @@ export class AttendancesComponent implements OnInit {
 
   ngOnInit() { }
 
-  // getAttendances(): void {
-  //   this.attendanceService.getAttendances().subscribe({
-  //     next: (res: Attendance[]) => this.records = res,
-  //     error:(err: any) => this.message.addMessage("error", err.error.error),
-  //   });
-  // }
-  //
-  // getRecords() {
-  //   return this.records;
-  // }
-  //
-
-
-  //
-  // addAttendance(attendance: Attendance) {
-  //   if (attendance.id >= 100 || attendance.id < 0) {
-  //     return;
-  //   }
-  //   this.attendanceService.addAttendance(attendance).subscribe({
-  //     next: () => this.getAttendances(),
-  //     error:(err: any) => this.message.addMessage("error", err.error.error),
-  //   });
-  // }
-  //
-  // updateAttendance(attendance: Attendance) {
-  //   this.attendanceService.updateAttendance(attendance).subscribe({
-  //     next: () => this.getAttendances(),
-  //     error:(err: any) => this.message.addMessage("error", err.error.error),
-  //   });
-  // }
-  //
-  // deleteAttendance(id: number) {
-  //   this.attendanceService.deleteAttendanceById(id).subscribe({
-  //     next: () => this.getAttendances(),
-  //     error: (err: any) => this.message.addMessage("error", err.error.error),
-  //   });
-  // }
-
   addError(err: string) {
     this.message.addMessage("error", err);
   }
@@ -102,8 +64,8 @@ export class AttendancesComponent implements OnInit {
     });
   }
 
-  async deleteAttendance($event: number) {
-    await this.attendanceService.deleteAttendanceById($event);
+  async deleteAttendance(id: number): Promise<void> {
+    await this.attendanceService.deleteAttendanceById(id);
   }
 
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, ViewChild, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, ViewChild, EventEmitter } from '@angular/core';
 import {Attendance} from "../../models/attendance";
 import {MessagesComponent} from "../messages/messages.component";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
@@ -6,8 +6,7 @@ import {Day} from "../../models/day";
 import {TranslateService} from "@ngx-translate/core";
 import {AttendanceService} from "../../services/attendance.service";
 import {DaysService} from "../../services/days.service";
-import {map, Observable} from "rxjs";
-import {State} from "../../models/state";
+import { map, Observable} from "rxjs";
 
 
 @Component({
@@ -75,6 +74,7 @@ export class AttendanceEditComponent implements OnInit {
   }
 
   async saveAttendance(): Promise<void> {
+    console.log("save");
     if (this.id === -1) {
       await this.attendanceService.addAttendance(
         this.control("fullName").value, this.control("day").value);
@@ -84,31 +84,45 @@ export class AttendanceEditComponent implements OnInit {
         name: this.control("fullName").value,
         day: this.control("day").value
       };
-      // this.update.emit(attendance);
       await this.attendanceService.updateAttendance(attendance);
     }
     this.productDialog = false;
   }
 
-  canRegistered(): boolean {
-    let flag = true;
-    let sum = 0;
-    // let userRecords = this.allRecords$.pipe(
-    //   map(attendance => attendance.attendances.filter(
-    //     record => record.name === this.control("fullName").value
-    //   ))
-    // );
-    //
-    // userRecords.pipe(
-    //   map(record =>
-    //   record))
+  canRegistered(): void {
+    const registrations$ = this.allRecords$.pipe(
+      map(records => (records.filter(record => record.name === this.control("fullName").value))
+      ));
 
 
-    // this.allRecords.forEach(async (record) => {
+
+    // this.allRecords$.pipe(
+    //   map(records =>
+    //     console.log(records.filter(record => record.name === this.control("fullName").value))
+    //   ));
+
+    registrations$.pipe(
+      map(records => records.map(async record => {
+        console.log(record);
+        if (record.day === this.control("day").value) {
+          console.log("It isn't possible to register more than once on the same day");
+          this.errorMessage.addMessage(
+            "error", "It isn't possible to register more than once on the same day");
+        } else if (records.length >= 3) {
+          console.log("It isn't possible to work from home more than three days a week");
+          this.errorMessage.addMessage(
+            "error", "It isn't possible to work from home more than three days a week");
+        } else {
+          await this.saveAttendance();
+        }
+      }))
+    );
+
+
+    // this.allRecords$.forEach(async (record) => {
     //   if (record.name === this.fullName?.value) {
     //     sum += 1;
     //     if (record.day === this.selectedDay?.name) {
-    //       this.errorMessage.addMessage("error","It isn't possible to register more than once on the same day");
     //       flag = false;
     //     }
     //   }
@@ -117,11 +131,14 @@ export class AttendanceEditComponent implements OnInit {
     // if (this.fullName?.value === this.tempAttendance.name) {
     //   max = 4;
     // }
-    // if (sum >= max) {
-    //   this.errorMessage.addMessage("error","It isn't possible to work from home more than three days a week");
+    //
+    // const length = registrations$.pipe(
+    //   map(records => records.length)
+    // );
+    //
+    // if (length >= 3) {
     //   flag = false;
     // }
-    return flag;
   }
 
   openUpdateDialog(attendance: Attendance) {
@@ -141,13 +158,13 @@ export class AttendanceEditComponent implements OnInit {
     this.productDialog = false;
   }
 
-  showDayError() {
-    if (this.control("day").invalid) {
-      this.dayError = "Select day is required";
-    } else {
-      this.dayError = '';
-    }
-    return this.dayError;
-  }
+  // showDayError() {
+  //   if (this.control("day").invalid) {
+  //     this.dayError = "Select day is required";
+  //   } else {
+  //     this.dayError = '';
+  //   }
+  //   return this.dayError;
+  // }
 
 }

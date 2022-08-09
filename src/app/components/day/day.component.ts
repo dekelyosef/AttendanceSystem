@@ -1,7 +1,7 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Attendance} from "../../models/attendance";
 import {AttendanceService} from "../../services/attendance.service";
-import {map, Observable, Subscription, switchAll} from "rxjs";
+import {map, Observable, switchAll} from "rxjs";
 import {DaysService} from "../../services/days.service";
 
 @Component({
@@ -9,7 +9,7 @@ import {DaysService} from "../../services/days.service";
   templateUrl: './day.component.html',
   styleUrls: ['./day.component.css']
 })
-export class DayComponent implements OnInit, OnDestroy {
+export class DayComponent implements OnInit {
 
   @Input()
   day = '';
@@ -20,9 +20,7 @@ export class DayComponent implements OnInit, OnDestroy {
   @Output()
   delete = new EventEmitter<number>();
 
-  allRecords$!: Observable<Attendance[]>;
   dayRecords$!: Observable<Attendance[]>;
-  subscription!: Subscription;
 
   //
   // public updateError = "";
@@ -32,27 +30,12 @@ export class DayComponent implements OnInit, OnDestroy {
   constructor(private attendanceService: AttendanceService,
               private dayService: DaysService) { }
 
-
   ngOnInit(): void {
     const translatedDay$ = this.dayService.getTranslatedDay(this.day);
 
-    this.allRecords$ = translatedDay$.pipe(
+    this.dayRecords$ = translatedDay$.pipe(
       map(day => this.attendanceService.getDayAttendances(day)),
       switchAll());
-    //
-    // this.subscription = this.allRecords$.pipe().subscribe(
-    //   next => {
-    //     if (next !== undefined) {
-    //       this.dayRecords$ = next.map(day => this.attendanceService.getDayAttendances(day));
-    //       });
-    //     }
-    //   }
-    // );
-
-  }
-
-  ngOnDestroy(): void {
-    throw new Error('Method not implemented.');
   }
 
   async deleteAttendance(id: number): Promise<void> {

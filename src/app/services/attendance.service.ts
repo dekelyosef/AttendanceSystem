@@ -63,7 +63,8 @@ export class AttendanceService {
   async updateAttendance(attendance: Attendance): Promise<void> {
     this.http.put<Attendance>(this.apiUrl + '/update', attendance).pipe(take(1)).subscribe(
       data => {
-        this.records = [...this.records, data];
+        this.records = [...this.records.map(
+          record => (record.id !== attendance.id) ? record : attendance)];
         this.records$.next(this.records);
       }),
       catchError(async (err) => this.addMessage("error", err.error.error));
