@@ -16,8 +16,7 @@ export class DaysService {
     {id: 6, name: 'friday'}
   ];
 
-  constructor(private translate: TranslateService) {
-  }
+  constructor(private translate: TranslateService) { }
 
   getDays(): Day[] {
     return this.days;

@@ -1,12 +1,9 @@
 import {Injectable} from '@angular/core';
-import {catchError, Observable, map, BehaviorSubject, Subject, takeUntil, take} from "rxjs";
+import {catchError, Observable, map, BehaviorSubject, take} from "rxjs";
 import {Attendance} from "../models/attendance";
 import {HttpClient} from "@angular/common/http";
 import { environment } from 'src/environments/environment';
-import {Message, MessageService} from "primeng/api";
-import {State} from "../models/state";
-import {TranslateService} from "@ngx-translate/core";
-import {Day} from "../models/day";
+import {MessageService} from "primeng/api";
 
 @Injectable({
   providedIn: 'root'
@@ -14,14 +11,12 @@ import {Day} from "../models/day";
 export class AttendanceService {
 
   private apiUrl = environment.apiUrl;
-  private messages!: Message[];
 
   private records: Attendance[] = [];
   private records$ = new BehaviorSubject<Attendance[]>(this.records);
 
   constructor(private http: HttpClient,
-                    private messageService: MessageService) {
-    this.messages = [];
+              private messageService: MessageService) {
     this.initializeAttendances();
   }
 
@@ -49,7 +44,6 @@ export class AttendanceService {
         this.records$.next(this.records);
       }),
       catchError(async (err) => this.addMessage("error", err.error.error));
-      // err => this.addMessage("error", err.error.error));
   }
 
   getId(): number {
@@ -79,17 +73,6 @@ export class AttendanceService {
       catchError(async (err) => this.addMessage("error", err.error.error));
     this.records$.next(this.records);
   }
-
-  // getDayRecords(day: string) {
-  //   return this.records$.asObservable().pipe(
-  //     map(data => data.filter(record => record.day === this.day))
-  //   );
-  //   let tempDay!: Day;
-  //   this.translate.get(day).pipe(
-  //     map(data => tempDay = data)
-  //   );
-  //   return this.records.attendances.filter(record => record.day === day);
-  // }
 
   getDayAttendances(day: string): Observable<Attendance[]> {
     return this.records$.asObservable().pipe(

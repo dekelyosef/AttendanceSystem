@@ -6,7 +6,7 @@ import {Day} from "../../models/day";
 import {TranslateService} from "@ngx-translate/core";
 import {AttendanceService} from "../../services/attendance.service";
 import {DaysService} from "../../services/days.service";
-import { map, Observable} from "rxjs";
+import {map, Observable, take} from "rxjs";
 
 
 @Component({
@@ -24,18 +24,11 @@ export class AttendanceEditComponent implements OnInit {
   @Output()
   update = new EventEmitter<Attendance>();
 
-  @Output()
-  error = new EventEmitter<string>();
-
   @ViewChild(MessagesComponent) errorMessage!: MessagesComponent ;
 
   public days!: Day[];
-  public dayError = "";
-  public productDialog: boolean = false;
+  public productDialog = false;
   public id = -1;
-  public flag = true;
-  // public tempAttendance: Attendance = {id: -1, name: '', day: ''};
-  public title = "Attendance details";
 
   public form = new FormGroup({
     fullName: new FormControl('', [
@@ -68,13 +61,10 @@ export class AttendanceEditComponent implements OnInit {
 
   clearDetails() {
     this.form.reset();
-    // this.selectedDay = undefined;
     this.id = -1;
-    // this.tempAttendance = {id: -1, name: '', day: ''};
   }
 
   async saveAttendance(): Promise<void> {
-    console.log("save");
     if (this.id === -1) {
       await this.attendanceService.addAttendance(
         this.control("fullName").value, this.control("day").value);
@@ -94,55 +84,24 @@ export class AttendanceEditComponent implements OnInit {
       map(records => (records.filter(record => record.name === this.control("fullName").value))
       ));
 
-
-
-    // this.allRecords$.pipe(
-    //   map(records =>
-    //     console.log(records.filter(record => record.name === this.control("fullName").value))
-    //   ));
-
-    registrations$.pipe(
-      map(records => records.map(async record => {
-        console.log(record);
-        if (record.day === this.control("day").value) {
-          console.log("It isn't possible to register more than once on the same day");
+    registrations$.pipe(take(1)).subscribe(
+      async records => {
+        const isDayRegister =
+          records.filter(record => record.day === this.control("day").value).length;
+        if (isDayRegister >= 1) {
           this.errorMessage.addMessage(
             "error", "It isn't possible to register more than once on the same day");
         } else if (records.length >= 3) {
-          console.log("It isn't possible to work from home more than three days a week");
           this.errorMessage.addMessage(
             "error", "It isn't possible to work from home more than three days a week");
         } else {
           await this.saveAttendance();
         }
-      }))
+      }
     );
-
-
-    // this.allRecords$.forEach(async (record) => {
-    //   if (record.name === this.fullName?.value) {
-    //     sum += 1;
-    //     if (record.day === this.selectedDay?.name) {
-    //       flag = false;
-    //     }
-    //   }
-    // });
-    // let max = 3;
-    // if (this.fullName?.value === this.tempAttendance.name) {
-    //   max = 4;
-    // }
-    //
-    // const length = registrations$.pipe(
-    //   map(records => records.length)
-    // );
-    //
-    // if (length >= 3) {
-    //   flag = false;
-    // }
   }
 
   openUpdateDialog(attendance: Attendance) {
-    // this.tempAttendance = attendance;
     this.control("fullName").setValue(attendance.name);
     this.control("day").setValue(attendance.day);
     this.id = attendance.id;
@@ -157,14 +116,5 @@ export class AttendanceEditComponent implements OnInit {
   hideDialog() {
     this.productDialog = false;
   }
-
-  // showDayError() {
-  //   if (this.control("day").invalid) {
-  //     this.dayError = "Select day is required";
-  //   } else {
-  //     this.dayError = '';
-  //   }
-  //   return this.dayError;
-  // }
 
 }

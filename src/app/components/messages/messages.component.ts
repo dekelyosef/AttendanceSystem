@@ -14,8 +14,7 @@ export class MessagesComponent implements OnInit {
     this.msg = [];
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() { }
 
   addMessage(type: string, message: string) {
     this.messageService.add({severity: type, summary: type, detail: message});
