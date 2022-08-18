@@ -1,12 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import {Attendance} from "../../models/attendance";
-import {Day} from "../../models/day";
-import {AttendanceService} from "../../services/attendance.service";
-import {MessagesComponent} from "../messages/messages.component";
+import { Attendance } from "../../models/attendance";
+import { Day } from "../../models/day";
+import { AttendanceService } from "../../services/attendance.service";
+import { MessagesComponent } from "../messages/messages.component";
 import * as XLSX from "xlsx";
-import {AttendanceEditComponent} from "../attendance-edit/attendance-edit.component";
-import {DaysService} from "../../services/days.service";
-import {Observable, take} from "rxjs";
+import { AttendanceEditComponent } from "../attendance-edit/attendance-edit.component";
+import { DaysService } from "../../services/days.service";
+import { Observable, take } from "rxjs";
+
 
 @Component({
   selector: 'app-attendances',

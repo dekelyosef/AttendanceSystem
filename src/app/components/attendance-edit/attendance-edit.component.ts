@@ -1,12 +1,12 @@
 import { Component, OnInit, Output, ViewChild, EventEmitter } from '@angular/core';
-import {Attendance} from "../../models/attendance";
-import {MessagesComponent} from "../messages/messages.component";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
-import {Day} from "../../models/day";
-import {TranslateService} from "@ngx-translate/core";
-import {AttendanceService} from "../../services/attendance.service";
-import {DaysService} from "../../services/days.service";
-import {map, Observable, take} from "rxjs";
+import { Attendance } from "../../models/attendance";
+import { MessagesComponent } from "../messages/messages.component";
+import { FormControl, FormGroup, Validators } from "@angular/forms";
+import { Day } from "../../models/day";
+import { TranslateService } from "@ngx-translate/core";
+import { AttendanceService } from "../../services/attendance.service";
+import { DaysService } from "../../services/days.service";
+import { map, Observable, take } from "rxjs";
 
 
 @Component({

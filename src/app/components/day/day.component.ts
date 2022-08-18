@@ -1,8 +1,8 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Attendance} from "../../models/attendance";
-import {AttendanceService} from "../../services/attendance.service";
-import {map, Observable, switchAll} from "rxjs";
-import {DaysService} from "../../services/days.service";
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Attendance } from "../../models/attendance";
+import { AttendanceService } from "../../services/attendance.service";
+import { map, Observable, switchAll } from "rxjs";
+import { DaysService } from "../../services/days.service";
 
 @Component({
   selector: 'app-day',
@@ -21,11 +21,6 @@ export class DayComponent implements OnInit {
   delete = new EventEmitter<number>();
 
   dayRecords$!: Observable<Attendance[]>;
-
-  //
-  // public updateError = "";
-  // public productDialog: boolean = false;
-  // public flag = false;
 
   constructor(private attendanceService: AttendanceService,
               private dayService: DaysService) { }

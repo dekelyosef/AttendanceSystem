@@ -1,9 +1,9 @@
-import {Injectable} from '@angular/core';
-import {catchError, Observable, map, BehaviorSubject, take} from "rxjs";
-import {Attendance} from "../models/attendance";
-import {HttpClient} from "@angular/common/http";
+import { Injectable } from '@angular/core';
+import { catchError, Observable, map, BehaviorSubject, take } from "rxjs";
+import { Attendance } from "../models/attendance";
+import { HttpClient } from "@angular/common/http";
 import { environment } from 'src/environments/environment';
-import {MessageService} from "primeng/api";
+import { MessageService } from "primeng/api";
 
 @Injectable({
   providedIn: 'root'
